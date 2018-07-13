@@ -10,17 +10,75 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
+// Provider returns a terraform.ResourceProvider.
 func Provider() terraform.ResourceProvider {
+	// TODO: Move the validation to this, requires conditional schemas
+	// TODO: Move the configuration to this, requires validation
+
+	// The actual provider
 	return &schema.Provider{
+		Schema: map[string]*schema.Schema{
+			"organization": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+			"common_name": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+			"organizational_unit": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+			"street_address": &schema.Schema{
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				ForceNew: true,
+			},
+			"locality": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+			"province": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+			"country": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+			"postal_code": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+			"serial_number": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+		},
+
+		DataSourcesMap: map[string]*schema.Resource{
+			"tls_public_key": dataSourcePublicKey(),
+		},
+
 		ResourcesMap: map[string]*schema.Resource{
 			"tls_private_key":         resourcePrivateKey(),
 			"tls_locally_signed_cert": resourceLocallySignedCert(),
 			"tls_self_signed_cert":    resourceSelfSignedCert(),
 			"tls_cert_request":        resourceCertRequest(),
 		},
-		DataSourcesMap: map[string]*schema.Resource{
-			"tls_public_key": dataSourcePublicKey(),
-		},
+		ConfigureFunc: providerConfigure,
 	}
 }
 
@@ -67,57 +125,4 @@ func nameFromResourceData(nameMap map[string]interface{}) (*pkix.Name, error) {
 	}
 
 	return result, nil
-}
-
-var nameSchema *schema.Resource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"organization": &schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-			ForceNew: true,
-		},
-		"common_name": &schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-			ForceNew: true,
-		},
-		"organizational_unit": &schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-			ForceNew: true,
-		},
-		"street_address": &schema.Schema{
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem: &schema.Schema{
-				Type: schema.TypeString,
-			},
-			ForceNew: true,
-		},
-		"locality": &schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-			ForceNew: true,
-		},
-		"province": &schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-			ForceNew: true,
-		},
-		"country": &schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-			ForceNew: true,
-		},
-		"postal_code": &schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-			ForceNew: true,
-		},
-		"serial_number": &schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-			ForceNew: true,
-		},
-	},
 }
