@@ -69,14 +69,14 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"public_key": dataSourcePublicKey(),
+			"tls_public_key": dataSourcePublicKey(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"private_key":         resourcePrivateKey(),
-			"locally_signed_cert": resourceLocallySignedCert(),
-			"self_signed_cert":    resourceSelfSignedCert(),
-			"cert_request":        resourceCertRequest(),
+			"tls_private_key":         resourcePrivateKey(),
+			"tls_locally_signed_cert": resourceLocallySignedCert(),
+			"tls_self_signed_cert":    resourceSelfSignedCert(),
+			"tls_cert_request":        resourceCertRequest(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
